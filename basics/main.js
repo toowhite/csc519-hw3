@@ -14,8 +14,9 @@ let client = redis.createClient(6379, '127.0.0.1', {});
 app.use(function (req, res, next) {
   console.log(req.method, req.url);
 
-  // Task 2 ... INSERT HERE.
-  // TODO: Store recent routes
+  client.lpush("recent", req.url);
+  let r = client.ltrim("recent", 0, 4);
+  // console.log(r);
 
   next(); // Passing the request to the next handler in the stack.
 });
@@ -24,7 +25,7 @@ app.use(function (req, res, next) {
 
 // responding to GET request to / route (http://IP:3000/)
 app.get('/', function (req, res) {
-  res.send('hello world')
+  res.send('hello world');
 })
 
 app.get('/test', function (req, res) {
@@ -35,14 +36,30 @@ app.get('/test', function (req, res) {
 
 // Task 1 ===========================================
 
-// TODO: Create two routes, `/get` and `/set`.
+app.get('/set', function (req, res) {
+  client.set("a new key", "this message will self-destruct in 10 seconds");
+  client.expire("a new key", 10);
+
+  res.send('set ok');
+});
+
+app.get('/get', function (req, res) {
+  client.get("a new key", (err, reply) => {
+    res.send(reply);
+  });
+});
+
 
 // ===================================================
 
 
 // Task 2 ============================================
 
-// TODO: Create a new route, `/recent`
+app.get('/recent', function (req, res) {
+  client.lrange("recent", 0, 4, (err, reply) => {
+    res.send(reply);
+  });
+});
 
 // ===================================================
 
