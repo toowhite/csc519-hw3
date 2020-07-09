@@ -8,6 +8,8 @@ const client = redis.createClient(6379, '127.0.0.1', {});
 var express = require('express');
 var router = express.Router();
 
+const RECENT_CAT_KEY = "recent_cat_key";
+
 /* GET users listing. */
 const upload = multer({ dest: './uploads/' })
 
@@ -20,7 +22,9 @@ router.post('/', upload.single('image'), function (req, res) {
       if (err) throw err;
       var img = new Buffer(data).toString('base64');
 
-      await db.cat(img);
+      // await db.cat(img);
+      client.lpush(RECENT_CAT_KEY, img);
+      client.ltrim(RECENT_CAT_KEY, 0, 4);
       res.send('Ok');
 
     });

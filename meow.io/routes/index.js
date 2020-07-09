@@ -16,14 +16,27 @@ router.get('/', async function(req, res, next) {
       resolve(reply ? JSON.parse(reply) : null);
     });
   });
-  // console.log(bestFacts);
   if (bestFacts == null) {
     console.log("Load bestFacts from db");
     bestFacts = (await db.votes()).slice(0,100);
     client.set(BEST_FACT_KEY, JSON.stringify(bestFacts));
-    client.expire(VOTED_FACTS_KEY, 10);
+    client.expire(BEST_FACT_KEY, 10);
   }
-  res.render('index', { title: 'meow.io', recentUploads: await db.recentCats(5), bestFacts: bestFacts});
+
+  let recentUploads = await new Promise((resolve) => {
+    client.lrange(RECENT_CAT_KEY, 0, 4, (err, reply) => {
+      // console.log(reply);
+      resolve(reply);
+    });
+  });
+  // if (recentUploads.length != 5) {
+  //   console.log("Load recentUploads from db");
+  //   recentUploads = await db.recentCats(5);
+  //   client.lpush(RECENT_CAT_KEY, recentUploads);
+  //   client.ltrim(RECENT_CAT_KEY, 0, 4);
+  // }
+
+  res.render('index', { title: 'meow.io', recentUploads: recentUploads, bestFacts: bestFacts});
 });
 
 module.exports = router;
