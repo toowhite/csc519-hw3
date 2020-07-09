@@ -1,11 +1,29 @@
 var express = require('express');
 var router = express.Router();
+const redis = require('redis');
+let client = redis.createClient(6379, '127.0.0.1', {});
 
 const db = require('../data/db');
 
+const BEST_FACT_KEY = "best_fact_key";
+const RECENT_CAT_KEY = "recent_cat_key";
+
 /* GET home page. */
 router.get('/', async function(req, res, next) {
-  res.render('index', { title: 'meow.io', recentUploads: await db.recentCats(5), bestFacts: (await db.votes()).slice(0,100) });
+  
+  let bestFacts = await new Promise((resolve) => {
+    client.get(BEST_FACT_KEY, (err, reply) => {
+      resolve(reply ? JSON.parse(reply) : null);
+    });
+  });
+  // console.log(bestFacts);
+  if (bestFacts == null) {
+    console.log("Load bestFacts from db");
+    bestFacts = (await db.votes()).slice(0,100);
+    client.set(BEST_FACT_KEY, JSON.stringify(bestFacts));
+    client.expire(VOTED_FACTS_KEY, 10);
+  }
+  res.render('index', { title: 'meow.io', recentUploads: await db.recentCats(5), bestFacts: bestFacts});
 });
 
 module.exports = router;
