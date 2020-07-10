@@ -15,8 +15,7 @@ app.use(function (req, res, next) {
   console.log(req.method, req.url);
 
   client.lpush("recent", req.url);
-  let r = client.ltrim("recent", 0, 4);
-  // console.log(r);
+  client.ltrim("recent", 0, 4);
 
   next(); // Passing the request to the next handler in the stack.
 });
@@ -74,7 +73,7 @@ app.post('/upload', upload.single('image'), function (req, res) {
     fs.readFile(req.file.path, function (err, data) {
       if (err) throw err;
       var img = new Buffer(data).toString('base64');
-      console.log(img);
+      // console.log(img);
 
       client.lpush('cats', img, function (err) {
         res.status(204).end()
