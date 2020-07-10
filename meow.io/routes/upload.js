@@ -9,6 +9,7 @@ var express = require('express');
 var router = express.Router();
 
 const RECENT_CAT_KEY = "recent_cat_key";
+const UPLOAD_QUEUE_KEY = "upload_queue_key";
 
 /* GET users listing. */
 const upload = multer({ dest: './uploads/' })
@@ -23,6 +24,8 @@ router.post('/', upload.single('image'), function (req, res) {
       var img = new Buffer(data).toString('base64');
 
       // await db.cat(img);
+      client.lpush(UPLOAD_QUEUE_KEY, img);
+
       client.lpush(RECENT_CAT_KEY, img);
       client.ltrim(RECENT_CAT_KEY, 0, 4);
       res.send('Ok');

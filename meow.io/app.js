@@ -7,6 +7,10 @@ var logger = require('morgan');
 var indexRouter = require('./routes/index');
 var uploadRouter = require('./routes/upload');
 var factRouter = require('./routes/fact');
+var db = require('./data/db.js');
+const redis = require('redis');
+const client = redis.createClient(6379, '127.0.0.1', {});
+const UPLOAD_QUEUE_KEY = "upload_queue_key";
 
 var app = express();
 
@@ -39,5 +43,21 @@ app.use(function(err, req, res, next) {
   res.status(err.status || 500);
   res.render('error');
 });
+
+setInterval(async () => {
+  console.log("Time to save images to db!");
+  let img;
+  do {
+    img = await new Promise(resolve => {
+      client.lpop(UPLOAD_QUEUE_KEY, (err, reply) => {
+        resolve(reply);
+      });
+    });
+    if (img) {
+      console.log("Saving an image");
+      await db.cat(img);
+    }
+  } while (img != null);
+}, 100);
 
 module.exports = app;

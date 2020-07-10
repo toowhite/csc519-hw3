@@ -29,12 +29,6 @@ router.get('/', async function(req, res, next) {
       resolve(reply);
     });
   });
-  // if (recentUploads.length != 5) {
-  //   console.log("Load recentUploads from db");
-  //   recentUploads = await db.recentCats(5);
-  //   client.lpush(RECENT_CAT_KEY, recentUploads);
-  //   client.ltrim(RECENT_CAT_KEY, 0, 4);
-  // }
 
   res.render('index', { title: 'meow.io', recentUploads: recentUploads, bestFacts: bestFacts});
 });
