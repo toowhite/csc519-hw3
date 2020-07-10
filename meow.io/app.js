@@ -45,7 +45,7 @@ app.use(function(err, req, res, next) {
 });
 
 setInterval(async () => {
-  console.log("Time to save images to db!");
+  // console.log("Time to save images to db!");
   let img;
   do {
     img = await new Promise(resolve => {
