@@ -33,7 +33,7 @@ Link: https://youtu.be/FRmd-CnC4Ds
 ### Circuit Breaker pattern
 Maintain a object recording the status of a service in the infrastructure, so that if it is temporarily down, the unavailabitiy can be detected, and recurring errors and failures are prevented. 
 
-Refers to:
+References:
 - https://en.wikipedia.org/wiki/Circuit_breaker_design_pattern
 
 ### Bulkhead pattern
@@ -41,7 +41,7 @@ Assign isolated connection pools (i.e. the bulkhead) to different services, so t
 
 For each client, a seperated service instance is assigned (a connection in the connection pool). Hence, if something wrong with a specific client, ohter clients can still be served.
 
-Refers to: 
+References: 
 - https://docs.microsoft.com/en-us/azure/architecture/patterns/bulkhead
 - https://www.youtube.com/watch?v=Kh3HxWk8YF4
 
