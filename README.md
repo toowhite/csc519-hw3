@@ -1,7 +1,8 @@
 # Screencast
 Link: https://youtu.be/FRmd-CnC4Ds 
 # Implementation
-I completed Task 1-5 as required.
+- I completed Task 1-5 as required.
+- After recording the screencast, I updated the code to use `promisify` on node-redis commands calls. That just makes the code look nicer, and is not supposed to change the behavior of the program.
 
 # Answer to conceptual questions
 
